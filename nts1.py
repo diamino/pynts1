@@ -12,9 +12,6 @@ import mido
 INPORT_NAME = 'NTS-1 digital kit KBD/KNOB'
 OUTPORT_NAME = 'NTS-1 digital kit SOUND'
 
-inport = mido.open_input(INPORT_NAME)
-outport = mido.open_output(OUTPORT_NAME)
-
 
 class Controls(Enum):
     EG_TYPE = 14
@@ -137,7 +134,7 @@ class NTS1Patch:
     reverb_mix: int = 0     # -100(D) - 100(W)
 
 
-def send_control_value(control: Controls, value: int) -> None:
+def send_control_value(outport: mido.ports.BaseOutput, control: Controls, value: int) -> None:
     msg = mido.Message('control_change', control=control.value, value=value)
     outport.send(msg)
 
@@ -156,39 +153,40 @@ def rate_none_linear2(value: float) -> int:
         return int(value*6.8)
 
 
-def send_patch(patch: NTS1Patch) -> None:
-    send_control_value(Controls.OSC_TYPE, patch.osc_type.value)
-    send_control_value(Controls.OSC_SHAPE, int(patch.osc_shape*1.27))
-    send_control_value(Controls.OSC_ALT, int(patch.osc_alt*1.27))
-    send_control_value(Controls.LFO_RATE, rate_non_linear(patch.lfo_rate))
-    send_control_value(Controls.LFO_DEPTH, int((patch.lfo_depth+100)*0.635))
-    send_control_value(Controls.FILTER_TYPE, patch.filter_type.value)
-    send_control_value(Controls.FILTER_CUTOFF, int(patch.filter_cutoff*1.27))
-    send_control_value(Controls.FILTER_RESONANCE, int(patch.filter_resonance*1.27))
-    send_control_value(Controls.FILTER_SWEEP_RATE, rate_non_linear(patch.filter_sweep_rate))
-    send_control_value(Controls.FILTER_SWEEP_DEPTH, int((patch.filter_sweep_depth+100)*0.635))
-    send_control_value(Controls.EG_TYPE, patch.eg_type.value)
-    send_control_value(Controls.EG_ATTACK, int(patch.eg_attack*1.27))
-    send_control_value(Controls.EG_RELEASE, int(patch.eg_release*1.27))
-    send_control_value(Controls.TREMOLO_RATE, rate_none_linear2(patch.tremolo_rate))
-    send_control_value(Controls.TREMOLO_DEPTH, int(patch.tremolo_depth*1.27))
-    send_control_value(Controls.MOD_TYPE, patch.mod_type.value)
-    send_control_value(Controls.MOD_TIME, int(patch.mod_time*1.27))
-    send_control_value(Controls.MOD_DEPTH, int(patch.mod_depth*1.27))
-    send_control_value(Controls.DELAY_TYPE, patch.delay_type.value)
-    send_control_value(Controls.DELAY_TIME, int(patch.delay_time*1.27))
-    send_control_value(Controls.DELAY_DEPTH, int(patch.delay_depth*1.27))
-    send_control_value(Controls.DELAY_MIX, int((patch.delay_mix+100)*0.635))
-    send_control_value(Controls.REVERB_TYPE, patch.reverb_type.value)
-    send_control_value(Controls.REVERB_TIME, int(patch.reverb_time*1.27))
-    send_control_value(Controls.REVERB_DEPTH, int(patch.reverb_depth*1.27))
-    send_control_value(Controls.REVERB_MIX, int((patch.reverb_mix+100)*0.635))
+def send_patch(outport: mido.ports.BaseInput, patch: NTS1Patch) -> None:
+    send_control_value(outport, Controls.OSC_TYPE, patch.osc_type.value)
+    send_control_value(outport, Controls.OSC_SHAPE, int(patch.osc_shape*1.27))
+    send_control_value(outport, Controls.OSC_ALT, int(patch.osc_alt*1.27))
+    send_control_value(outport, Controls.LFO_RATE, rate_non_linear(patch.lfo_rate))
+    send_control_value(outport, Controls.LFO_DEPTH, int((patch.lfo_depth+100)*0.635))
+    send_control_value(outport, Controls.FILTER_TYPE, patch.filter_type.value)
+    send_control_value(outport, Controls.FILTER_CUTOFF, int(patch.filter_cutoff*1.27))
+    send_control_value(outport, Controls.FILTER_RESONANCE, int(patch.filter_resonance*1.27))
+    send_control_value(outport, Controls.FILTER_SWEEP_RATE, rate_non_linear(patch.filter_sweep_rate))
+    send_control_value(outport, Controls.FILTER_SWEEP_DEPTH, int((patch.filter_sweep_depth+100)*0.635))
+    send_control_value(outport, Controls.EG_TYPE, patch.eg_type.value)
+    send_control_value(outport, Controls.EG_ATTACK, int(patch.eg_attack*1.27))
+    send_control_value(outport, Controls.EG_RELEASE, int(patch.eg_release*1.27))
+    send_control_value(outport, Controls.TREMOLO_RATE, rate_none_linear2(patch.tremolo_rate))
+    send_control_value(outport, Controls.TREMOLO_DEPTH, int(patch.tremolo_depth*1.27))
+    send_control_value(outport, Controls.MOD_TYPE, patch.mod_type.value)
+    send_control_value(outport, Controls.MOD_TIME, int(patch.mod_time*1.27))
+    send_control_value(outport, Controls.MOD_DEPTH, int(patch.mod_depth*1.27))
+    send_control_value(outport, Controls.DELAY_TYPE, patch.delay_type.value)
+    send_control_value(outport, Controls.DELAY_TIME, int(patch.delay_time*1.27))
+    send_control_value(outport, Controls.DELAY_DEPTH, int(patch.delay_depth*1.27))
+    send_control_value(outport, Controls.DELAY_MIX, int((patch.delay_mix+100)*0.635))
+    send_control_value(outport, Controls.REVERB_TYPE, patch.reverb_type.value)
+    send_control_value(outport, Controls.REVERB_TIME, int(patch.reverb_time*1.27))
+    send_control_value(outport, Controls.REVERB_DEPTH, int(patch.reverb_depth*1.27))
+    send_control_value(outport, Controls.REVERB_MIX, int((patch.reverb_mix+100)*0.635))
 
 
 def main() -> None:
-
     from patches import milk_bottles
-    send_patch(milk_bottles)
+
+    outport = mido.open_output(OUTPORT_NAME)
+    send_patch(outport, milk_bottles)
 
 
 if __name__ == '__main__':
