@@ -5,6 +5,7 @@ from nts1 import (NTS1Patch,
                   DelayType,
                   ReverbType)
 
+# Milk Bottles patch by ChrisLody (https://youtu.be/pSlGfrfRvxw)
 milk_bottles = NTS1Patch(osc_type=OscillatorType.TRI,
                          osc_shape=50,
                          osc_alt=0,
