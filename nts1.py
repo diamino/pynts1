@@ -104,6 +104,31 @@ class ReverbType(Enum):
     SUBMARINE = 105
 
 
+class ArpType(Enum):
+    # ARP PATTERN:UP, DOWN, UP-DOWN, DOWN-UP, CONV, DIV, CONV-DIV, DIV-CONV, RAND, STOCH
+    #   = vv:0,12,24,36,48,60,72,84,96,108
+    UP = 0
+    DOWN = 12
+    UP_DOWN = 24
+    DOWN_UP = 36
+    CONV = 48
+    DIV = 60
+    CONV_DIV = 72
+    DIV_CONV = 84
+    RAND = 96
+    STOCH = 108
+
+
+class ArpChord(Enum):
+    # ARP INTERVALS:OCT, MAJ, SUS, AUG, MIN, DIM = vv:0,21,42,63,84,105
+    OCT = 0
+    MAJ = 21
+    SUS = 42
+    AUG = 63
+    MIN = 84
+    DIM = 105
+
+
 @dataclass
 class NTS1Patch:
     osc_type: OscillatorType = OscillatorType.SAW
@@ -132,6 +157,9 @@ class NTS1Patch:
     reverb_time: int = 0    # 0 - 100
     reverb_depth: int = 0   # 0 - 100
     reverb_mix: int = 0     # -100(D) - 100(W)
+    arp_type: ArpType = ArpType.UP
+    arp_length: int = 1     # 1 - 24
+    arp_chord: ArpChord = ArpChord.OCT
 
 
 def send_control_value(outport: mido.ports.BaseOutput, control: Controls, value: int) -> None:
@@ -180,6 +208,9 @@ def send_patch(outport: mido.ports.BaseInput, patch: NTS1Patch) -> None:
     send_control_value(outport, Controls.REVERB_TIME, int(patch.reverb_time*1.27))
     send_control_value(outport, Controls.REVERB_DEPTH, int(patch.reverb_depth*1.27))
     send_control_value(outport, Controls.REVERB_MIX, int((patch.reverb_mix+100)*0.635))
+    send_control_value(outport, Controls.ARP_PATTERN, patch.arp_type.value)
+    send_control_value(outport, Controls.ARP_LENGTH, int((patch.arp_length-1)/24*127))
+    send_control_value(outport, Controls.ARP_INTERVALS, patch.arp_chord.value)
 
 
 def main() -> None:
