@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 import mido
 from nts1 import NTS1, ModuleType
