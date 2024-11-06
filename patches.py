@@ -15,7 +15,7 @@ ice_storm = NTS1Patch(osc_type=OscillatorType.TRI,
                       filter_cutoff=0,
                       filter_resonance=100,
                       filter_sweep_rate=30.0,
-                      filter_sweep_depth=-100,
+                      filter_sweep_depth=-100,  # U100
                       eg_type=EnvelopeType.AHR,
                       eg_attack=0,
                       eg_release=100,

@@ -1,8 +1,9 @@
 import sys
 import mido
-import nts1
+from nts1 import NTS1, ModuleType
 
 OUTPORT_NAME = 'NTS-1 digital kit SOUND'
+INPORT_NAME = 'NTS-1 digital kit KBD/KNOB'
 
 
 def main() -> None:
@@ -18,6 +19,9 @@ def main() -> None:
     args = parser.parse_args()
 
     outport = mido.open_output(OUTPORT_NAME)
+    inport = mido.open_input(INPORT_NAME)
+
+    print(">>> Patchloader for the Nu:Tekt NTS-1 <<<\n")
 
     patch_name = args.patchname
     module_name = args.module
@@ -27,7 +31,18 @@ def main() -> None:
         print(f"Patch with name '{patch_name}' not found!")
         sys.exit(1)
 
-    nts1.send_patch(outport, patch)
+    nts1 = NTS1(outport=outport, inport=inport)
+    nts1.request_user_slots()
+
+    print(f"Number of modulation user slots used: {nts1.num_slots_used(ModuleType.MOD)}")
+    print(f"Number of delay user slots used: {nts1.num_slots_used(ModuleType.DELAY)}")
+    print(f"Number of reverb user slots used: {nts1.num_slots_used(ModuleType.REVERB)}")
+    print(f"Number of oscillator user slots used: {nts1.num_slots_used(ModuleType.OSC)}")
+
+    nts1.send_patch(patch)
+    print(f"\nPatch '{patch_name}' sent to NTS-1")
+
+    nts1.close()
 
 
 if __name__ == '__main__':
