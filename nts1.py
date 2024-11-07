@@ -177,13 +177,13 @@ class NTS1Patch:
 
 
 def rate_non_linear(value: float) -> int:
-    if value >= 3.0:
+    if value >= 2.6:
         return int(value*2.3+58)
     else:
         return int(value*24.5)
 
 
-def rate_none_linear2(value: float) -> int:
+def rate_non_linear2(value: float) -> int:
     if value >= 9.5:
         return int(value*1.26+51.5)
     else:
@@ -269,7 +269,7 @@ class NTS1:
         self.send_control_value(Controls.EG_TYPE, patch.eg_type.value)
         self.send_control_value(Controls.EG_ATTACK, int(patch.eg_attack*1.27))
         self.send_control_value(Controls.EG_RELEASE, int(patch.eg_release*1.27))
-        self.send_control_value(Controls.TREMOLO_RATE, rate_none_linear2(patch.tremolo_rate))
+        self.send_control_value(Controls.TREMOLO_RATE, rate_non_linear2(patch.tremolo_rate))
         self.send_control_value(Controls.TREMOLO_DEPTH, int(patch.tremolo_depth*1.27))
         self.send_control_value(Controls.MOD_TYPE, self.mod_type_value(patch.mod_type))
         self.send_control_value(Controls.MOD_TIME, int(patch.mod_time*1.27))
