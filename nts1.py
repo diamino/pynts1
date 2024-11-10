@@ -196,9 +196,7 @@ class NTS1:
         self.outport = outport
         self.inport = inport
         self.slots = [0] * 4
-        # self.msg_sent = threading.Event()
         self.msg_received = threading.Event()
-        self.inport.callback = self.receive_msg
 
     def close(self):
         self.inport.close()
@@ -224,6 +222,8 @@ class NTS1:
         self.outport.send(msg)
 
     def request_user_slots(self):
+        if self.inport.callback is None:
+            self.inport.callback = self.receive_msg
         for module_id in ModuleType:
             for slot_id in range(MODULE_SIZE[module_id.value - 1]):
                 self.send_user_slot_status_request(module_id, slot_id)

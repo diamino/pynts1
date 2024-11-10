@@ -16,6 +16,8 @@ def main() -> None:
                         help='The name of the patch to be loaded')
     parser.add_argument('-m', '--module', type=str, default="patches",
                         help="The module to load the patch from. Defaults to 'patches'")
+    parser.add_argument('--no-user-slots', action='store_true',
+                        help="Disables the request for user slots. More stable, but may lead to incorrect patch loading.")
 
     args = parser.parse_args()
 
@@ -33,12 +35,14 @@ def main() -> None:
         sys.exit(1)
 
     nts1 = NTS1(outport=outport, inport=inport)
-    nts1.request_user_slots()
 
-    print(f"Number of modulation user slots used: {nts1.num_slots_used(ModuleType.MOD)}")
-    print(f"Number of delay user slots used: {nts1.num_slots_used(ModuleType.DELAY)}")
-    print(f"Number of reverb user slots used: {nts1.num_slots_used(ModuleType.REVERB)}")
-    print(f"Number of oscillator user slots used: {nts1.num_slots_used(ModuleType.OSC)}")
+    if not args.no_user_slots:
+        nts1.request_user_slots()
+
+        print(f"Number of modulation user slots used: {nts1.num_slots_used(ModuleType.MOD)}")
+        print(f"Number of delay user slots used: {nts1.num_slots_used(ModuleType.DELAY)}")
+        print(f"Number of reverb user slots used: {nts1.num_slots_used(ModuleType.REVERB)}")
+        print(f"Number of oscillator user slots used: {nts1.num_slots_used(ModuleType.OSC)}")
 
     nts1.send_patch(patch)
     print(f"\nPatch '{patch_name}' sent to NTS-1")
