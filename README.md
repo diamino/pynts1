@@ -19,20 +19,22 @@ pip install -r requirements.txt
 In the repo is a script to load a patch from the command line: `patchloader.py`.
 
 The usage of this script is as follows:
-```bash
-usage: patchloader.py [-h] [-m MODULE] patchname
+```
+usage: patchloader.py [-h] [-m MODULE] [--no-user-slots] [patchname]
 
 positional arguments:
-  patchname            The name of the patch to be loaded
+  patchname            The name of the patch to be loaded. Omit to list available patches in module.
 
 options:
   -h, --help           show this help message and exit
   -m, --module MODULE  The module to load the patch from. Defaults to 'patches'
+  --no-user-slots      Disables the request for user slots. More stable, but may lead to incorrect
+                       patch loading.
 ```
 
 Example:
 ```bash
-./patchloader.py milk_bottles
+./patchloader.py -m patches milk_bottles
 ```
 
 See the `patches.py` file for some pre-configured patches.
